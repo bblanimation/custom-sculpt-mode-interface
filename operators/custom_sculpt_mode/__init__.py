@@ -69,7 +69,7 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
 
         self.sculpt_opts = SculptOptions()
 
-        # bpy.ops.object.mode_set(mode='SCULPT')
+        bpy.ops.object.mode_set(mode='SCULPT')
 
         self.ui_setup()
         self.ui_setup_post()
@@ -95,6 +95,11 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
     def update(self):
         """ Check if we need to update any internal data structures """
         pass
+
+    def should_pass_through(self, context, event):
+        if context.area.type == "VIEW_3D":  # and event.mouse_region_x < 0:
+            return True
+        return False
 
     ###################################################
     # class methods
