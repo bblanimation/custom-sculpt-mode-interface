@@ -22,9 +22,12 @@
 import bpy
 
 # Addon imports
-from ..functions import *
-from ..addon_common.cookiecutter.cookiecutter import CookieCutter
-from ..addon_common.common.decorators import PersistentOptions
+from .sculpt_ui_init import Sculpt_UI_Init
+# from .sculpt_ui_draw import Sculpt_UI_Draw
+from .sculpt_states import Sculpt_States
+from ...functions import *
+from ...addon_common.cookiecutter.cookiecutter import CookieCutter
+from ...addon_common.common.decorators import PersistentOptions
 
 
 @PersistentOptions()
@@ -36,7 +39,7 @@ class SculptOptions:
     }
 
 
-class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_UI_Draw, Sculpt_States, CookieCutter):
+class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
     """ Forces sculpt mode with custom interface """
     operator_id    = "scene.custom_sculpt_mode"
     bl_idname      = "scene.custom_sculpt_mode"
@@ -52,10 +55,10 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_UI_Draw, Sculpt_States,
     def can_start(cls, context):
         """ Start only if editing a mesh """
         ob = context.active_object
-        return (ob and ob.type == "MESH" and context.mode == "EDIT_MESH")
+        return (ob and ob.type == "MESH" and context.mode == "OBJECT")
 
     def start(self):
-        """ ExtruCut tool is starting """
+        """ Custom Sculpt Mode is starting """
         scn = bpy.context.scene
 
         bpy.ops.ed.undo_push()  # push current state to undo
@@ -66,15 +69,21 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_UI_Draw, Sculpt_States,
 
         self.sculpt_opts = SculptOptions()
 
+        # bpy.ops.object.mode_set(mode='SCULPT')
+
         self.ui_setup()
+        self.ui_setup_post()
+        self.start_post()
 
 
     def end_commit(self):
         """ Commit changes to mesh! """
-        pass
+        bpy.ops.object.mode_set(mode='OBJECT')
+        self.end_commit_post()
 
     def end_cancel(self):
         """ Cancel changes """
+        bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.ed.undo()   # undo everything
 
     def end(self):
@@ -94,6 +103,18 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_UI_Draw, Sculpt_States,
         pass
 
     def do_something_else(self):
+        pass
+
+    #############################################
+    # Subclassing functions
+
+    def ui_setup_post(self):
+        pass
+
+    def start_post(self):
+        pass
+
+    def end_commit_post(self):
         pass
 
     #############################################

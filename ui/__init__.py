@@ -23,7 +23,7 @@ import bpy
 from bpy.types import Panel
 
 # Addon imports
-# NONE!
+from ..functions.common import *
 
 
 class VIEW3D_PT_custom_sculpt_mode_interface(Panel):
@@ -31,7 +31,7 @@ class VIEW3D_PT_custom_sculpt_mode_interface(Panel):
     bl_region_type = "UI" if b280() else "TOOLS"
     bl_label       = "Sculpt Mode Interface"
     bl_idname      = "VIEW3D_PT_custom_sculpt_mode_interface"
-    bl_context     = "object"
+    bl_context     = "objectmode"
     bl_category    = "Sculpt Mode Interface"
 
     def draw(self, context):

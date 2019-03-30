@@ -45,7 +45,7 @@ class Sculpt_UI_Init():
         def mode_setter(m): self.fsm_change(m)
 
         # UPPER LEFT WINDOW, mode setters and commit/cancel buttons
-        self.tools_panel = self.wm.create_window('Skeleton Tools', {'pos':7, 'movable':True, 'bgcolor':(0.50, 0.50, 0.50, 0.90)})
+        self.tools_panel = self.wm.create_window('Sculpt Tools', {'pos':7, 'movable':True, 'bgcolor':(0.50, 0.50, 0.50, 0.90)})
         precut_container = self.tools_panel.add(ui.UI_Container()) # TODO: make this rounded
         self.mode_frame = precut_container.add(ui.UI_Frame('Skeleton Mode'))
         self.mode_options = self.mode_frame.add(ui.UI_Options(mode_getter, mode_setter, separation=0))
@@ -59,7 +59,7 @@ class Sculpt_UI_Init():
         #####################################
         ### Collapsible Help and Options   ##
         #####################################
-        self.info_panel = self.wm.create_window('Skeleton Help',
+        self.info_panel = self.wm.create_window('Sculpt Mode Help',
                                                 {'pos':9,
                                                  'movable':True,
                                                  'bgcolor':(0.50, 0.50, 0.50, 0.90)})
@@ -68,12 +68,12 @@ class Sculpt_UI_Init():
         self.inst_paragraphs = [collapse_container.add(ui.UI_Markdown('', min_size=(100,10), max_size=(250, 20))) for i in range(2)]
         self.set_ui_text()
         #for i in self.inst_paragraphs: i.visible = False
-        self.options_frame = self.info_panel.add(ui.UI_Frame('Tool Options'))
-        self.options_frame.add(ui.UI_Number("Size", get_blobsize, set_blobsize, fn_get_print_value=get_blobsize_print, fn_set_print_value=set_blobsize))
-        self.wax_action_options = self.options_frame.add(ui.UI_Options(get_action, set_action, label="Action: ", vertical=True))
-        self.wax_action_options.add_option("do something")
-        self.wax_action_options.add_option("do something else")
-        self.wax_action_options.add_option("none")
+        # self.options_frame = self.info_panel.add(ui.UI_Frame('Tool Options'))
+        # self.options_frame.add(ui.UI_Number("Size", get_blobsize, set_blobsize, fn_get_print_value=get_blobsize_print, fn_set_print_value=set_blobsize))
+        # self.wax_action_options = self.options_frame.add(ui.UI_Options(get_action, set_action, label="Action: ", vertical=True))
+        # self.wax_action_options.add_option("do something")
+        # self.wax_action_options.add_option("do something else")
+        # self.wax_action_options.add_option("none")
 
     def set_ui_text(self):
         ''' sets the viewports text '''

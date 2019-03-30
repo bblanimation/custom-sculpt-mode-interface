@@ -22,7 +22,7 @@ from bpy_extras import view3d_utils
 from mathutils import Vector, Matrix, Color
 
 # Addon imports
-from .wax_drop_datastructure import InputPoint, CurveNode, SplineSegment
+# from .wax_drop_datastructure import InputPoint, CurveNode, SplineSegment
 from ...functions import common_drawing
 from ...addon_common.cookiecutter.cookiecutter import CookieCutter
 from ...addon_common.common.shaders import circleShader
