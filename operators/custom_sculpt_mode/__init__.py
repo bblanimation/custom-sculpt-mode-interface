@@ -66,6 +66,12 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
         self.header_text_set("Sculpt Mode")
         self.cursor_modal_set("CROSSHAIR")
         self.manipulator_hide()
+        try:
+            bpy.ops.screen.back_to_previous()
+        except:
+            pass
+        # bpy.ops.screen.screen_full_area()
+        bpy.ops.view3d.toolshelf()  # hide tool shelf
 
         self.sculpt_opts = SculptOptions()
 
@@ -91,13 +97,16 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
         self.manipulator_restore()
         self.header_text_restore()
         self.cursor_modal_restore()
+        # bpy.ops.view3d.toolshelf()  # hide tool shelf
+        bpy.ops.screen.back_to_previous()
 
     def update(self):
         """ Check if we need to update any internal data structures """
         pass
 
     def should_pass_through(self, context, event):
-        if context.area.type == "VIEW_3D":  # and event.mouse_region_x < 0:
+        # TODO: BUG... this allows anything to pass through. Is the context being overwritten somewhere in cookiecutter?
+        if context.area.type == "VIEW_3D":
             return True
         return False
 
