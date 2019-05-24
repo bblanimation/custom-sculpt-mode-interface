@@ -33,6 +33,7 @@ except ImportError:
 # Module imports
 from .python_utils import confirmIter, confirmList
 from .wrappers import blender_version_wrapper
+from .reporting import b280
 
 
 #################### PREFERENCES ####################
@@ -96,16 +97,10 @@ def duplicate(obj:Object, linked:bool=False, link_to_scene:bool=False):
 
 @blender_version_wrapper('<=','2.79')
 def setActiveObj(obj:Object, scene:Scene=None):
-    if obj is None:
-        return
-    assert type(obj) == Object
     scene = scene or bpy.context.scene
     scene.objects.active = obj
 @blender_version_wrapper('>=','2.80')
 def setActiveObj(obj:Object, view_layer:ViewLayer=None):
-    if obj is None:
-        return
-    assert type(obj) == Object
     view_layer = view_layer or bpy.context.view_layer
     view_layer.objects.active = obj
 
@@ -143,16 +138,24 @@ def selectAll():
     select(bpy.context.scene.objects)
 
 
-def selectVerts(vertList, only:bool=False):
-    """ selects verts in list and deselects the rest """
+def selectGeom(geom):
+    """ selects verts/edges/faces in list """
     # confirm vertList is a list of vertices
-    vertList = confirmList(vertList)
-    # deselect all if selection is exclusive
-    if only: deselectAll()
+    geom = confirmList(geom)
     # select vertices in list
-    for v in vertList:
-        if v is not None and not v.select:
-            v.select = True
+    for item in geom:
+        if item is not None and not item.select:
+            item.select = True
+
+
+def deselectGeom(geom):
+    """ deselects verts/edges/faces in list """
+    # confirm vertList is a list of vertices
+    geom = confirmList(geom)
+    # select vertices in list
+    for item in geom:
+        if item is not None and item.select:
+            item.select = False
 
 
 @blender_version_wrapper('<=','2.79')
@@ -313,9 +316,19 @@ def insertKeyframes(objs, keyframeType:str, frame:int, if_needed:bool=False):
         inserted = obj.keyframe_insert(data_path=keyframeType, frame=frame, options=options)
 
 
-def apply_modifiers(obj:Object, settings:str="PREVIEW"):
+@blender_version_wrapper("<=", "2.79")
+def new_mesh_from_object(obj:Object):
+    return bpy.data.meshes.new_from_object(bpy.context.scene, obj, apply_modifiers=True, settings="PREVIEW")
+@blender_version_wrapper(">=", "2.80")
+def new_mesh_from_object(obj:Object):
+    depsgraph = bpy.context.view_layer.depsgraph
+    obj_eval = depsgraph.objects.get(obj.name, None)
+    return bpy.data.meshes.new_from_object(obj_eval)
+
+
+def apply_modifiers(obj:Object):
     """ apply modifiers to object """
-    m = obj.to_mesh(bpy.context.scene, True, "PREVIEW")
+    m = new_mesh_from_object(obj)
     obj.modifiers.clear()
     obj.data = m
 
@@ -346,18 +359,12 @@ def is_adaptive(ob:Object):
 def tag_redraw_areas(areaTypes:iter=["ALL"]):
     """ run tag_redraw for given area types """
     areaTypes = confirmList(areaTypes)
-    for area in bpy.context.screen.areas:
-        for areaType in areaTypes:
-            if areaType == "ALL" or area.type == areaType:
-                area.tag_redraw()
-
-
-def tag_redraw_viewport_in_all_screens():
-    """redraw the 3D viewport in all screens (bypasses bpy.context.screen)"""
-    for screen in bpy.data.screens:
+    screens = [bpy.context.screen] if bpy.context.screen else bpy.data.screens
+    for screen in screens:
         for area in screen.areas:
-            if area.type == "VIEW_3D":
-                area.tag_redraw()
+            for areaType in areaTypes:
+                if areaType == "ALL" or area.type == areaType:
+                    area.tag_redraw()
 
 
 @blender_version_wrapper("<=", "2.79")
@@ -385,6 +392,24 @@ def changeContext(context, areaType:str):
     lastAreaType = context.area.type
     context.area.type = areaType
     return lastAreaType
+
+
+def AssembleOverrideContextForView3dOps():
+    """
+    Iterates through the blender GUI's areas & regions to find the View3D space
+    NOTE: context override can only be used with bpy.ops that were called from a window/screen with a view3d space
+    """
+    win      = bpy.context.window
+    scr      = win.screen
+    areas3d  = [area for area in scr.areas if area.type == 'VIEW_3D']
+    region   = [region for region in areas3d[0].regions if region.type == 'WINDOW']
+    override = {'window':win,
+                'screen':scr,
+                'area'  :areas3d[0],
+                'region':region[0],
+                'scene' :bpy.context.scene,
+                }
+    return override
 
 
 @blender_version_wrapper('<=','2.79')
@@ -438,6 +463,14 @@ def smoothMeshFaces(faces:iter):
 #################### OTHER ####################
 
 
+@blender_version_wrapper('<=','2.79')
+def update_depsgraph():
+    bpy.context.scene.update()
+@blender_version_wrapper('>=','2.80')
+def update_depsgraph():
+    bpy.context.view_layer.depsgraph.update()
+
+
 def getItemByID(collection:bpy.types.CollectionProperty, id:int):
     """ get UIlist item from collection with given id """
     success = False
@@ -470,6 +503,21 @@ def set_active_scene(scene:Scene):
 @blender_version_wrapper('>=','2.80')
 def set_active_scene(scene:Scene):
     bpy.context.window.scene = scene
+
+@blender_version_wrapper('<=','2.79')
+def get_cursor_location():
+    return bpy.context.scene.cursor_location
+@blender_version_wrapper('>=','2.80')
+def get_cursor_location():
+    return bpy.context.scene.cursor.location
+
+
+@blender_version_wrapper('<=','2.79')
+def set_cursor_location(loc:tuple):
+    bpy.context.scene.cursor_location = loc
+@blender_version_wrapper('>=','2.80')
+def set_cursor_location(loc:tuple):
+    bpy.context.scene.cursor.location = loc
 
 
 @blender_version_wrapper('<=','2.79')

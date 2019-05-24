@@ -98,7 +98,7 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
         self.manipulator_restore()
         self.header_text_restore()
         self.cursor_modal_restore()
-        # bpy.ops.view3d.toolshelf()  # hide tool shelf
+        bpy.ops.view3d.toolshelf()  # show tool shelf
         # bpy.ops.screen.back_to_previous()
 
     def update(self):
