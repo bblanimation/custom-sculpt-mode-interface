@@ -39,10 +39,39 @@ class SCULPT_OT_region_painter(SCENE_OT_custom_sculpt_mode):
         self.obj = bpy.context.active_object
         self.painted_verts = list()
 
-    def end_commit_pre(self):
-        # bme = bmesh.new()
-        # bme.from_mesh(self.obj.data)
-        for v in self.painted_verts:
-            pass  # remove(v)
+        scn = bpy.context.scene
+        paint_settings = scn.tool_settings.unified_paint_settings
+        paint_settings.use_locked_size = True
+        paint_settings.unprojected_radius = .5
+        brush = bpy.data.brushes['Mask']
+        brush.strength = 2
+        brush.stroke_method = 'SPACE'
+        scn.tool_settings.sculpt.brush = brush
+        scn.tool_settings.sculpt.use_symmetry_x = False
+        scn.tool_settings.sculpt.use_symmetry_y = False
+        scn.tool_settings.sculpt.use_symmetry_z = False
+        bpy.ops.brush.curve_preset(shape='MAX')
+
+    def end_commit_post(self):
+
+        obj = bpy.context.active_object
+
+        bme = bmesh.new()
+        bme.from_mesh(obj.data)
+
+        mask = bme.verts.layers.paint_mask.verify()
+
+        print('There are %i verts in the bmesh' % len(bme.verts))
+        delete = []
+        for v in bme.verts:
+            if v[mask] > 0:
+                delete.append(v)
+
+        print('Deleting %i verts' % len(delete))
+        bmesh.ops.delete(bme, geom=delete, context=1)
+
+        bme.to_mesh(obj.data)
+        bme.free()
+        obj.data.update()
 
     #############################################

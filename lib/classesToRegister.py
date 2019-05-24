@@ -23,4 +23,5 @@ from ..operators import *
 classes = [
     VIEW3D_PT_custom_sculpt_mode_interface,
     SCENE_OT_custom_sculpt_mode,
+    SCULPT_OT_region_painter,
 ]

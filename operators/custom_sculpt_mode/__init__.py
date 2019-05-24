@@ -75,6 +75,7 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
 
         self.sculpt_opts = SculptOptions()
 
+        self.starting_mode = bpy.context.mode
         bpy.ops.object.mode_set(mode='SCULPT')
 
         self.ui_setup()
@@ -89,7 +90,7 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
 
     def end_cancel(self):
         """ Cancel changes """
-        bpy.ops.object.mode_set(mode='OBJECT')
+        bpy.ops.object.mode_set(mode=self.starting_mode)
         bpy.ops.ed.undo()   # undo everything
 
     def end(self):
@@ -98,7 +99,7 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
         self.header_text_restore()
         self.cursor_modal_restore()
         # bpy.ops.view3d.toolshelf()  # hide tool shelf
-        bpy.ops.screen.back_to_previous()
+        # bpy.ops.screen.back_to_previous()
 
     def update(self):
         """ Check if we need to update any internal data structures """

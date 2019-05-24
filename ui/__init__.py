@@ -36,7 +36,7 @@ class VIEW3D_PT_custom_sculpt_mode_interface(Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("scene.custom_sculpt_mode")
+        layout.operator("sculpt.region_painter")
 
         if bpy.data.texts.find('Custom Sculpt Mode Interface log') >= 0:
             split = layout_split(layout, factor=0.9)
