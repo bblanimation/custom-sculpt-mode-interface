@@ -66,12 +66,12 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
         self.header_text_set("Sculpt Mode")
         self.cursor_modal_set("CROSSHAIR")
         self.manipulator_hide()
-        try:
-            bpy.ops.screen.back_to_previous()
-        except:
-            pass
+        #try:
+        #    bpy.ops.screen.back_to_previous()
+        #except:
+        #    pass
         # bpy.ops.screen.screen_full_area()
-        bpy.ops.view3d.toolshelf()  # hide tool shelf
+        #bpy.ops.view3d.toolshelf()  # hide tool shelf
 
         self.sculpt_opts = SculptOptions()
 
@@ -87,20 +87,20 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
         """ Commit changes to mesh! """
         bpy.ops.object.mode_set(mode='OBJECT')
         self.end_commit_post()
-
+        
     def end_cancel(self):
         """ Cancel changes """
         bpy.ops.object.mode_set(mode=self.starting_mode)
         bpy.ops.ed.undo()   # undo everything
-
+   
     def end(self):
         """ Restore everything, because we're done """
         self.manipulator_restore()
         self.header_text_restore()
         self.cursor_modal_restore()
-        bpy.ops.view3d.toolshelf()  # show tool shelf
+        #bpy.ops.view3d.toolshelf()  # show tool shelf
         # bpy.ops.screen.back_to_previous()
-
+    
     def update(self):
         """ Check if we need to update any internal data structures """
         pass
@@ -121,8 +121,11 @@ class SCENE_OT_custom_sculpt_mode(Sculpt_UI_Init, Sculpt_States, CookieCutter):
         pass
 
     #############################################
-    # Subclassing functions
+    # Subclassing functions for override
 
+    def start_pre(self):
+        pass
+    
     def ui_setup_post(self):
         pass
 
