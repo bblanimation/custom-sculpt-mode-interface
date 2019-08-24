@@ -22,7 +22,7 @@
 import bpy
 import bmesh
 
-# Addon imports
+# Module imports
 from .custom_sculpt_mode import *
 from ..functions import *
 from ..addon_common.common import ui

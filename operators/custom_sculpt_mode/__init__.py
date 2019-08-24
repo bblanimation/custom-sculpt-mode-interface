@@ -21,7 +21,7 @@
 # Blender imports
 import bpy
 
-# Addon imports
+# Module imports
 from .sculpt_ui_init import Sculpt_UI_Init
 # from .sculpt_ui_draw import Sculpt_UI_Draw
 from .sculpt_states import Sculpt_States

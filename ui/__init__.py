@@ -15,34 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# System imports
-# NONE!
-
-# Blender imports
-import bpy
-from bpy.types import Panel
-
-# Addon imports
-from ..functions.common import *
-
-
-class VIEW3D_PT_custom_sculpt_mode_interface(Panel):
-    bl_space_type  = "VIEW_3D"
-    bl_region_type = "UI" if b280() else "TOOLS"
-    bl_label       = "Sculpt Mode Interface"
-    bl_idname      = "VIEW3D_PT_custom_sculpt_mode_interface"
-    bl_context     = "objectmode"
-    bl_category    = "Sculpt Mode Interface"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("sculpt.region_painter")
-
-        if bpy.data.texts.find('Custom Sculpt Mode Interface log') >= 0:
-            split = layout_split(layout, factor=0.9)
-            col = split.column(align=True)
-            row = col.row(align=True)
-            row.operator("bricker.report_error", text="Report Error", icon="URL")
-            col = split.column(align=True)
-            row = col.row(align=True)
-            row.operator("bricker.close_report_error", text="", icon="PANEL_CLOSE")
+from .interface import *
